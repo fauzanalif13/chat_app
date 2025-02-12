@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 final colorScheme = ColorScheme.fromSeed(
   brightness: Brightness.light,
-  seedColor: const Color.fromARGB(255, 232, 99, 255),
+  seedColor: const Color.fromARGB(255, 217, 0, 255),
   surface: const Color.fromARGB(255, 169, 200, 255),
 );
 
@@ -20,17 +20,27 @@ final textTheme = GoogleFonts.latoTextTheme().copyWith(
   ),
 );
 
-final theme = ThemeData().copyWith(
-  brightness: Brightness.light,
-  colorScheme: colorScheme,
-  textTheme: textTheme,
-  scaffoldBackgroundColor: colorScheme.surface,
+final elevatedButton = ElevatedButtonThemeData(
+  style: ElevatedButton.styleFrom(
+    backgroundColor: colorScheme.onPrimaryContainer,
+    foregroundColor: colorScheme.onPrimary,
+    textStyle: TextStyle(fontSize: 16),
+    elevation: 2,
+  ),
 );
+
+final theme = ThemeData().copyWith(
+    brightness: Brightness.light,
+    colorScheme: colorScheme,
+    textTheme: textTheme,
+    scaffoldBackgroundColor: colorScheme.onPrimary,
+    elevatedButtonTheme: elevatedButton);
 
 final darkTheme = ThemeData.dark().copyWith(
   brightness: Brightness.dark,
   colorScheme: ColorScheme.dark(),
   textTheme: textTheme,
+  elevatedButtonTheme: elevatedButton,
   scaffoldBackgroundColor: const Color.fromARGB(255, 22, 22, 22),
 );
 
