@@ -1,6 +1,12 @@
-import 'package:chat_app/screen/auth_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+///IMPORT SCREEN
+import 'package:chat_app/screen/auth_screen.dart';
+
+///FIREBASE SDK SETUP
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 final colorScheme = ColorScheme.fromSeed(
   brightness: Brightness.light,
@@ -44,7 +50,12 @@ final darkTheme = ThemeData.dark().copyWith(
   scaffoldBackgroundColor: const Color.fromARGB(255, 22, 22, 22),
 );
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  ///FIREBASE INIT
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(
     const MainApp(),
   );
