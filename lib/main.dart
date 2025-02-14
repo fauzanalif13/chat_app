@@ -1,3 +1,7 @@
+import 'package:chat_app/screen/chat_screen.dart';
+import 'package:chat_app/screen/splash_screen.dart';
+import 'package:chat_app/screen/tabs_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -34,6 +38,8 @@ final elevatedButton = ElevatedButtonThemeData(
     elevation: 2,
   ),
 );
+
+final appBarTheme = AppBarTheme(backgroundColor: colorScheme.onPrimary);
 
 final theme = ThemeData().copyWith(
     brightness: Brightness.light,
@@ -72,7 +78,20 @@ class MainApp extends StatelessWidget {
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
       title: 'Flutter Chat App',
-      home: AuthScreen(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SplashScreen();
+          }
+
+          if (snapshot.hasData) {
+            return TabsScreen();
+          }
+
+          return AuthScreen();
+        },
+      ),
     );
   }
 }
