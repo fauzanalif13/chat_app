@@ -1,6 +1,7 @@
 import 'package:chat_app/main.dart';
 import 'package:chat_app/screen/chat_screen.dart';
 import 'package:chat_app/screen/profile_screen.dart';
+import 'package:chat_app/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 class TabsScreen extends StatefulWidget {
@@ -32,13 +33,14 @@ class _TabsScreenState extends State<TabsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(activePageTitle),
         backgroundColor: appBarTheme.backgroundColor,
+        title: Text(activePageTitle),
       ),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
           onTap: _selectPage,
           currentIndex: _selectedPageIndex,
+          showUnselectedLabels: false,
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chat'),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
