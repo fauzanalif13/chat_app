@@ -12,6 +12,12 @@ class ProfileScreen extends StatelessWidget {
         spacing: 6,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          CircleAvatar(
+            radius: 40,
+            backgroundColor: Colors.blueGrey,
+            // foregroundImage: FileImage(),
+          ),
+          SizedBox(height: 20),
           Text('You in profile screen!'),
           TextButton.icon(
             onPressed: () {

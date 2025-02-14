@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:chat_app/main.dart';
+import 'package:chat_app/widget/user_image_picker.dart';
 import 'package:flutter/material.dart';
 
 ///AUTH FIREBASE
@@ -20,10 +23,14 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredEmail = '';
   var _enteredPassword = '';
 
+  ///STORE PICKED IMAGE
+  File? selectedImage;
+
   void _submit() async {
     final isValid = _formKey.currentState!.validate();
 
-    if (!isValid) {
+    if (!isValid || !_isLogin && selectedImage == null) {
+      ///SHOW ERROR MESSAGE..
       return;
     }
 
@@ -94,6 +101,14 @@ class _AuthScreenState extends State<AuthScreen> {
                         spacing: 20,
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          ///TAKE PHOTO PROFILE
+                          if (!_isLogin)
+                            UserImagePicker(
+                              onPickedImage: (pickedImage) {
+                                selectedImage = pickedImage;
+                              },
+                            ),
+
                           ///EMAIL FORM
                           TextFormField(
                             decoration: InputDecoration(
