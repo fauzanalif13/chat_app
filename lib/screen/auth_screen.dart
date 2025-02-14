@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:chat_app/main.dart';
 import 'package:chat_app/widget/user_image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 ///AUTH FIREBASE
@@ -22,14 +23,15 @@ class _AuthScreenState extends State<AuthScreen> {
   var _isLogin = true;
   var _enteredEmail = '';
   var _enteredPassword = '';
+  var _isAuthenticating = false;
 
   ///STORE PICKED IMAGE
-  File? selectedImage;
+  File? _selectedImage;
 
   void _submit() async {
     final isValid = _formKey.currentState!.validate();
 
-    if (!isValid || !_isLogin && selectedImage == null) {
+    if (!isValid || !_isLogin && _selectedImage == null) {
       ///SHOW ERROR MESSAGE..
       return;
     }
@@ -38,18 +40,34 @@ class _AuthScreenState extends State<AuthScreen> {
     _formKey.currentState!.save();
 
     try {
+      setState(() {
+        _isAuthenticating = true;
+      });
+
       if (_isLogin) {
         /// USER LOGS IN
-        final userCredential = _firebase.signInWithEmailAndPassword(
+        final userCredential = await _firebase.signInWithEmailAndPassword(
             email: _enteredEmail, password: _enteredPassword);
       } else {
         ///USER SIGN UP
-        final userCredential = _firebase.createUserWithEmailAndPassword(
+        final userCredential = await _firebase.createUserWithEmailAndPassword(
             email: _enteredEmail, password: _enteredPassword);
+
+        ///STORAGE UPLOAD IMAGE
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('user_images')
+            .child('${userCredential.user!.uid}.jpg');
+
+        ///UPLOAD IMAGE TO FIREBASE
+        await storageRef.putFile(_selectedImage!);
+        final imageUrl = await storageRef.getDownloadURL();
+        debugPrint(imageUrl);
+
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Signed'),
+            content: Text('Success Signed in'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -69,6 +87,10 @@ class _AuthScreenState extends State<AuthScreen> {
     ///SEND TO FIREBASE
     debugPrint(_enteredEmail);
     debugPrint(_enteredPassword);
+
+    setState(() {
+      _isAuthenticating = false;
+    });
   }
 
   @override
@@ -105,7 +127,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           if (!_isLogin)
                             UserImagePicker(
                               onPickedImage: (pickedImage) {
-                                selectedImage = pickedImage;
+                                _selectedImage = pickedImage;
                               },
                             ),
 
@@ -182,34 +204,38 @@ class _AuthScreenState extends State<AuthScreen> {
                               _enteredPassword = value!;
                             },
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            spacing: 12,
-                            children: [
-                              ElevatedButton(
-                                onPressed: _submit,
-                                child: Text(_isLogin ? 'Sign In' : 'Sign Up'),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _isLogin = !_isLogin;
-                                    });
-                                  },
-                                  child: Text(
-                                    _isLogin ? 'Sign Up' : 'Login',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontFamily:
-                                          textTheme.bodyLarge.toString(),
+                          _isAuthenticating
+                              ? CircularProgressIndicator()
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: _submit,
+                                      child:
+                                          Text(_isLogin ? 'Login' : 'Sign Up'),
                                     ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          )
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _isLogin = !_isLogin;
+                                          });
+                                        },
+                                        child: Text(
+                                          _isLogin
+                                              ? 'Dont have an account? Sign Up'
+                                              : 'Already have an account? Login!',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily:
+                                                textTheme.bodyLarge.toString(),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
                         ],
                       ),
                     ),
