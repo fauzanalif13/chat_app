@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:chat_app/main.dart';
 import 'package:chat_app/widget/user_image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
@@ -22,6 +23,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   var _isLogin = true;
   var _enteredEmail = '';
+  var _enteredUsername = '';
   var _enteredPassword = '';
   var _isAuthenticating = false;
 
@@ -63,6 +65,17 @@ class _AuthScreenState extends State<AuthScreen> {
         await storageRef.putFile(_selectedImage!);
         final imageUrl = await storageRef.getDownloadURL();
         debugPrint(imageUrl);
+
+        ///CREATE DOCUMENT NAMED USERS, AND SUB FOLDER DYNAMIC NAMED
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'username': _enteredUsername,
+          'email': _enteredEmail,
+          'password': _enteredPassword,
+          'image_url': imageUrl,
+        });
 
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -164,6 +177,36 @@ class _AuthScreenState extends State<AuthScreen> {
                               _enteredEmail = value!;
                             },
                           ),
+
+                          ///USERNAME FORM
+                          if (!_isLogin)
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelStyle: Theme.of(context)
+                                    .copyWith()
+                                    .textTheme
+                                    .bodyLarge,
+                                labelText: 'Username',
+                                icon: Container(
+                                    alignment: Alignment.center,
+                                    width: 20,
+                                    child: Icon(Icons.person)),
+                              ),
+                              enableSuggestions: false,
+                              validator: (value) {
+                                if (value == null ||
+                                    value.trim().isEmpty ||
+                                    value.trim().length < 4) {
+                                  return 'Please enter more than 4 characters or a valid Username.';
+                                }
+
+                                ///USERNAME HAS VALID
+                                return null;
+                              },
+                              onSaved: (newValue) {
+                                _enteredUsername = newValue!;
+                              },
+                            ),
 
                           ///PASSWORD FORM
                           TextFormField(
