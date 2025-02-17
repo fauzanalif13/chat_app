@@ -1,4 +1,6 @@
 import 'package:chat_app/main.dart';
+import 'package:chat_app/widget/chat_message.dart';
+import 'package:chat_app/widget/new_message.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -7,9 +9,17 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text('You logged in!',
-            style: Theme.of(context).copyWith().textTheme.bodyLarge),
+      body: const Column(
+        children: [
+          Expanded(child: ChatMessage()),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            child: NewMessage(),
+          ),
+          SizedBox(
+            height: 18,
+          )
+        ],
       ),
     );
   }
