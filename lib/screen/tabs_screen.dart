@@ -1,7 +1,6 @@
 import 'package:chat_app/main.dart';
 import 'package:chat_app/screen/chat_screen.dart';
 import 'package:chat_app/screen/profile_screen.dart';
-import 'package:chat_app/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 class TabsScreen extends StatefulWidget {

@@ -19,11 +19,13 @@ class _ChatScreenState extends State<ChatScreen> {
     // final notificationSettings =
     await fcm.requestPermission();
 
+    fcm.subscribeToTopic('chat');
+
     ///IT RETURN AN ADDRESS OF DEVICE
     final token = await fcm.getToken();
 
     ///WE CAN SEND THIS TOKEN VIA HTTP OR FIRESTORE SDK TO A BACKEND
-    debugPrint(token);
+    debugPrint('Token is: $token');
   }
 
   @override
