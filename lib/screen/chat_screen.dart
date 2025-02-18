@@ -2,8 +2,37 @@ import 'package:chat_app/widget/chat_message.dart';
 import 'package:chat_app/widget/new_message.dart';
 import 'package:flutter/material.dart';
 
-class ChatScreen extends StatelessWidget {
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
+
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  void setupPushNotifications() async {
+    final fcm = FirebaseMessaging.instance;
+
+    /// WE CAN DECLARE AS A VARIABLE FOR VARIOUS PERMISSION
+    // final notificationSettings =
+    await fcm.requestPermission();
+
+    ///IT RETURN AN ADDRESS OF DEVICE
+    final token = await fcm.getToken();
+
+    ///WE CAN SEND THIS TOKEN VIA HTTP OR FIRESTORE SDK TO A BACKEND
+    debugPrint(token);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    ///REQUEST PERMISSION FOR PUSH NOTIFICATIONS
+    setupPushNotifications();
+  }
 
   @override
   Widget build(BuildContext context) {

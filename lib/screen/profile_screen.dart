@@ -62,13 +62,15 @@ class ProfileScreen extends StatelessWidget {
                 Text(username ?? 'Unknown User',
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                SizedBox(height: 20),
                 TextButton.icon(
                   onPressed: () {
                     FirebaseAuth.instance.signOut();
                   },
                   icon: Icon(Icons.logout),
-                  label: Text('Sign Out'),
+                  label: Text('Sign Out',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic)),
                 ),
               ],
             );

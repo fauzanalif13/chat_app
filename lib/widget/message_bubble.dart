@@ -120,8 +120,8 @@ class MessageBubble extends StatelessWidget {
                     ),
                     // Margin around the bubble.
                     margin: const EdgeInsets.symmetric(
-                      vertical: 4,
-                      horizontal: 12,
+                      vertical: 3,
+                      horizontal: 8,
                     ),
                     child: Text(
                       message,
