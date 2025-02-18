@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class NewMessage extends StatefulWidget {
@@ -16,17 +18,38 @@ class _NewMessageState extends State<NewMessage> {
     super.dispose();
   }
 
-  void _submitMessage() {
+  void _submitMessage() async {
     final enteredMessage = _messageController.text;
 
     if (enteredMessage.trim().isEmpty) {
       return;
     }
 
+    ///ACCESS TO CURRENT USER
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    ///ACCESS DATA FROM CURRENT USER
+    final currentUserData = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser!.uid)
+        .get();
+
     ///SEND MESSAGE TO FIREBASE
+    FirebaseFirestore.instance.collection('chat').add(
+      {
+        'text': enteredMessage,
+        'createdAt': Timestamp.now(),
+        'userId': currentUser.uid,
+        'userName': currentUserData.data()!['username'],
+        'userImage': currentUserData.data()!['image_url'],
+      },
+    );
 
     ///CLEAR THE MESSAGE AFTER SENT
     _messageController.clear();
+
+    ///WILL CLOSE KEYBOARD AFTER SEND CHAT
+    FocusScope.of(context).unfocus();
   }
 
   @override
@@ -42,6 +65,10 @@ class _NewMessageState extends State<NewMessage> {
               autocorrect: true,
               enableSuggestions: true,
               decoration: InputDecoration(labelText: 'Send a message...'),
+              textInputAction: TextInputAction.newline,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              onSubmitted: (value) => _submitMessage(),
             ),
           ),
           IconButton(

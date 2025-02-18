@@ -1,4 +1,3 @@
-import 'package:chat_app/main.dart';
 import 'package:chat_app/widget/chat_message.dart';
 import 'package:chat_app/widget/new_message.dart';
 import 'package:flutter/material.dart';
